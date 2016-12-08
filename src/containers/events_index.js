@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {fetchEvents} from '../actions/index';
 import {Link} from 'react-router';
+
+import {fetchEvents} from '../actions/index';
 
 class EventsIndex extends Component{
 	componentWillMount(){
@@ -9,20 +10,17 @@ class EventsIndex extends Component{
 	}
 	renderEvents(){
 		return this.props.events.map((event)=>{
-					return (
-						<li 
-							className="list-group-item"
-							key={event.id}
-						>
-							<Link to={`/${event.id}`}>{event.name}</Link>
-						</li>
-					);
-				})
-
-		
+			return (
+				<li 
+				className="list-group-item"
+				key={event.id}>
+					<Link to={`/${event.id}`}>{event.name}</Link>
+				</li>
+			);
+		});
 	}
+	
 	render(){
-		console.log(this.props.events[0]);
 		return(
 			<ul className="list-group">
 			<h3>События</h3>
