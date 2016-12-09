@@ -6,3 +6,11 @@ h1{
 	padding: 20px;
 	
 }
+
+td {
+	border: 2px solid green;
+	width: 30px;
+}
+td.busy {
+	background: grey;
+} 

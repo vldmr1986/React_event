@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 
+
 import {fetchEvents} from '../actions/index';
 
 class EventsIndex extends Component{
@@ -9,7 +10,9 @@ class EventsIndex extends Component{
 		this.props.fetchEvents();
 	}
 	renderEvents(){
+
 		return this.props.events.map((event)=>{
+
 			return (
 				<li 
 				className="list-group-item"
@@ -23,6 +26,7 @@ class EventsIndex extends Component{
 	render(){
 		return(
 			<ul className="list-group">
+			<Link to='/table' className='btn btn-primary'>Go to Table</Link>
 			<h3>События</h3>
 				{this.renderEvents()}
 			</ul>					
@@ -32,7 +36,7 @@ class EventsIndex extends Component{
 
 function mapStateToProps(state){
 	return {
-		events: state.events.all
+		events: state.events.all,
 	};
 }
 export default connect(mapStateToProps, {fetchEvents})(EventsIndex);
