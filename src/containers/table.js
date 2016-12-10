@@ -17,24 +17,30 @@ class Table extends Component{
 			sa$0: 0, sa$1: 0, sa$2: 0, sa$3: 0, sa$4: 0, sa$5: 0, sa$6: 0, sa$7: 0, sa$8: 0, sa$9: 0, sa$10: 0, sa$11: 0,
 			sa$12: 0, sa$13: 0, sa$14: 0, sa$15: 0, sa$16: 0, sa$17: 0, sa$18: 0, sa$19: 0, sa$20: 0, sa$21: 0, sa$22: 0, sa$23: 0,
 			su$0: 0, su$1: 0, su$2: 0, su$3: 0, su$4: 0, su$5: 0, su$6: 0, su$7: 0, su$8: 0, su$9: 0, su$10: 0, su$11: 0,
-			su$12: 0, su$13: 0, su$14: 0, su$15: 0, su$16: 0, su$17: 0, su$18: 0, su$19: 0, su$20: 0, su$21: 0, su$22: 0, su$23: 0
+			su$12: 0, su$13: 0, su$14: 0, su$15: 0, su$16: 0, su$17: 0, su$18: 0, su$19: 0, su$20: 0, su$21: 0, su$22: 0, su$23: 0,
+			mouseInterval: 0
 		};
-	this.renderHours = this.renderHours.bind(this);
-	this.onHourClick = this.onHourClick.bind(this);
-	this.onAllClick = this.onAllClick.bind(this);
-}
+		
+		this.renderHours = this.renderHours.bind(this);
+		this.onHourClick = this.onHourClick.bind(this);
+		this.onAllClick = this.onAllClick.bind(this);
+		this.moveMouseInterval=this.moveMouseInterval.bind(this);
+		this.clearCalendar = this.clearCalendar.bind(this);
+	}
 
-componentWillMount(){
-	this.refactorSchedule(this.props.schedule);
-}
+	componentWillMount(){
+		this.refactorSchedule(this.props.schedule);
+	}
 
 	renderHours(day, hour){
 		return this.state[day+'$'+hour];
 	}
+	
 	onHourClick(day,indexHour) {
-		event.preventDefault();
+		if (this.state[day+'$'+indexHour]===0) {this.setState({mouseInterval: 1});}
 		this.setState({[day+'$'+indexHour]: 1- this.state[day+'$'+indexHour]});
 	}
+	
 	onAllClick(day,hoursInDay) {
 		let arr=[];
 		for (let i=0; i<hoursInDay; i++) {
@@ -46,8 +52,8 @@ componentWillMount(){
 				[day+'$'+i]: autoComplete
 			});
 		} 
-
 	}
+
 	refactorSchedule(recievedData) {
 		Object.keys(recievedData).map((day)=>{
 			recievedData[day].forEach((time)=>{
@@ -56,54 +62,81 @@ componentWillMount(){
 				for (let i=beginBusy; i<=endBusy; i++ )
 				{ this.setState({[day+'$'+i]: 1})}
 			});
-
 		});
-		
 	}
 
+	moveMouseInterval(day,hour){
+		if (this.state.mouseInterval=== 1){
+			this.setState({
+				[day+'$'+hour]: 1
+			});
+		}
+	}
+
+	buttonUp(){
+		this.setState({
+			mouseInterval : 0
+		});
+	}
+
+	clearCalendar(){
+		for(let key in this.state){
+			this.setState({
+				[key] : 0
+			});
+		}
+	}
 
 	render(){
 		const arr=['mo', 'tu','we','th','fr', 'sa', 'su'];
 		const arr2=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 		const hoursInDay = arr2.length;
 
-
 		return (
-			<table>
-			<thead>
-				<tr>
-					<td>Days </td>
-					<td>ALL</td>
-					<td colSpan='3'>00:00 </td>
-					<td colSpan='3'>03:00 </td>
-					<td colSpan='3'>06:00 </td>
-					<td colSpan='3'>09:00 </td>
-					<td colSpan='3'>12:00 </td>
-					<td colSpan='3'>15:00 </td>
-					<td colSpan='3'>18:00 </td>
-					<td colSpan='3'>21:00 </td>
-				</tr>
-			</thead>
-			<tbody>
-				{arr.map((day,indexDay)=>{ return (
-					<tr key={day}>
-						<td >{day}</td>
-						<td onClick={(e)=>{ console.log(e);
-							this.onAllClick(day, hoursInDay)}}
-						>ALL</td>
-						{arr2.map((hour, indexHour)=>{
-							return (
-								<td 
-									className={['', 'busy'][this.state[day+'$'+hour]]}
-									onMouseDown={()=>{event.preventDefault();
-										this.onHourClick(day, indexHour )}}
-									key={hour}>
-								</td>);
-						})}
-					</tr>
+			<div className='table-wrapper' 
+			onMouseUp={()=>{this.buttonUp()}}>
+				<table >
+					<thead>
+						<tr>
+							<td></td>
+							<td>ALL DAY</td>
+							<td colSpan='3'>00:00 </td>
+							<td colSpan='3'>03:00 </td>
+							<td colSpan='3'>06:00 </td>
+							<td colSpan='3'>09:00 </td>
+							<td colSpan='3'>12:00 </td>
+							<td colSpan='3'>15:00 </td>
+							<td colSpan='3'>18:00 </td>
+							<td colSpan='3'>21:00 </td>
+						</tr>
+					</thead>
+				<tbody >
+					{arr.map((day,indexDay)=>{ return (
+						<tr key={day}>
+							<td >{day.toUpperCase()}</td>
+							<td 
+							onClick={(e)=>{this.onAllClick(day, hoursInDay)}}>
+							</td>
+							{arr2.map((hour, indexHour)=>{
+								return (
+									<td 
+										className={['', 'busy'][this.state[day+'$'+hour]]}
+										onMouseDown={()=>{this.onHourClick(day, indexHour )}}
+										onMouseMove={()=>{this.moveMouseInterval(day,hour)}}
+										key={hour}>
+									</td>
+								);
+							})}
+						</tr>
 					)})}
-			</tbody>
-			</table>);
+				</tbody>
+				</table>
+				<button className='btn btn-danger pull-xs-right'
+				onClick={()=>{this.clearCalendar()}}
+
+				>Clear</button>
+			</div>
+			);
 	}
 }
 
